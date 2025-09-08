@@ -4,11 +4,19 @@ pipeline {
         nodejs 'nodejs-24'
     }
     stages {
-        stage ('VM Node Version') {
+        stage ('Install Dependencies') {
             steps {
-                sh 'echo Just Checking if Webhook Works'
-                sh 'node -v'
-                sh 'npm -v'
+                sh 'npm install'
+            }
+        }
+        stage ('Unit Testing') {
+            steps {
+                sh 'npm test'
+            }
+        }
+        stage ('Deploy Application') {
+            steps {
+                sh 'npm start'
             }
         }
     }
