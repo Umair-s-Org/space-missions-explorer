@@ -26,6 +26,8 @@ pipeline {
                             --out ./
                             --format ALL
                             --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12'
+                            
+                        dependencyCheckPublisher failedTotalCritical: 4, pattern: 'dependency-check-junit.xml', stopBuild: true, unstableTotalCritical: 2
                     }
                 }
 
