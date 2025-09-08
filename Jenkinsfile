@@ -3,6 +3,10 @@ pipeline {
     tools {
         nodejs 'nodejs-24'
     }
+    environment {
+        MONGO_URI = "mongodb://admin:secret@localhost:27017/mydb?authSource=admin"
+    }
+
     stages {
         stage ('Install Dependencies') {
             steps {
@@ -40,7 +44,11 @@ pipeline {
         }
         stage ('Unit Testing') {
             steps {
-                sh 'npm test'
+                withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                    sh 'npm test'
+                }
+                junit allowEmptyResults: true, keepProperties: true, testResults: 'test-results.xml'
+                
             }
         }
         // stage ('Deploy Application') {
