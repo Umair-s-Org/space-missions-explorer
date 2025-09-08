@@ -52,11 +52,13 @@ pipeline {
             }
         }
         stage ('Code Coverage') {
+            steps {
                 withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
                     catchError(buildResult: 'SUCCESS', message: 'Code Coverage below threshold. Will be fixed soon!', stageResult: 'UNSTABLE') {
                         sh 'npm run coverage'
-}
+                    }
                 }
+            }
         }
         // stage ('Deploy Application') {
         //     steps {
