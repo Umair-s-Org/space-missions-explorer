@@ -7,6 +7,7 @@ pipeline {
         stage ('Install Dependencies') {
             steps {
                 sh 'npm install --no-audit'
+                sh 'node seed.js' //Add data into DB
             }
         }
         stage ('Dependency Scanning') {
