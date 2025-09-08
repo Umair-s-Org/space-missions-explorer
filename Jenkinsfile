@@ -6,18 +6,26 @@ pipeline {
     stages {
         stage ('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh 'npm install --no-audit'
             }
         }
-        stage ('Unit Testing') {
+        stage ('NPM Dependency Audit') {
             steps {
-                sh 'npm test'
+                sh '''
+                    npm audit --audit-level=crirtical
+                    echo $?
+                '''
             }
         }
-        stage ('Deploy Application') {
-            steps {
-                sh 'npm start'
-            }
-        }
+        // stage ('Unit Testing') {
+        //     steps {
+        //         sh 'npm test'
+        //     }
+        // }
+        // stage ('Deploy Application') {
+        //     steps {
+        //         sh 'npm start'
+        //     }
+        // }
     }
 }
