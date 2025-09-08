@@ -32,18 +32,16 @@ pipeline {
                         junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
 
                         publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-
-                        junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
                     }
                 }
 
             }
         }
-        // stage ('Unit Testing') {
-        //     steps {
-        //         sh 'npm test'
-        //     }
-        // }
+        stage ('Unit Testing') {
+            steps {
+                sh 'npm test'
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
