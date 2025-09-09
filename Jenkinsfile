@@ -6,8 +6,8 @@ pipeline {
     environment {
         MONGO_URI = "mongodb://admin:secret@localhost:27017/mydb?authSource=admin"
         MONGO_DB_CREDS = credentials('Mongo-DB-Credentials')
-        MONGO_USERNAME = ${MONGO_DB_CREDS_USR}  // As the app needs environmental variable MONGO_USERNAME instead of MONGO_DB_CREDS_USR which will be created by the above 
-        MONGO_PASSWORD = ${MONGO_DB_CREDS_PSW}  // As the app needs environmental variable MONGO_PASSWORD instead of MONGO_DB_CREDS_PSW which will be created by the MONGO_DB_CREDS
+        MONGO_USERNAME = "${MONGO_DB_CREDS_USR}"  // As the app needs environmental variable MONGO_USERNAME instead of MONGO_DB_CREDS_USR which will be created by the above 
+        MONGO_PASSWORD = "${MONGO_DB_CREDS_PSW}"  // As the app needs environmental variable MONGO_PASSWORD instead of MONGO_DB_CREDS_PSW which will be created by the MONGO_DB_CREDS
     }
 
     stages {
