@@ -5,6 +5,9 @@ pipeline {
     }
     environment {
         MONGO_URI = "mongodb://admin:secret@localhost:27017/mydb?authSource=admin"
+        MONGO_DB_CREDS = credentials('Mongo-DB-Credentials')
+        MONGO_USERNAME = ${MONGO_DB_CREDS_USR}  // As the app needs environmental variable MONGO_USERNAME instead of MONGO_DB_CREDS_USR which will be created by the above 
+        MONGO_PASSWORD = ${MONGO_DB_CREDS_PSW}  // As the app needs environmental variable MONGO_PASSWORD instead of MONGO_DB_CREDS_PSW which will be created by the MONGO_DB_CREDS
     }
 
     stages {
@@ -44,21 +47,15 @@ pipeline {
         // }
         stage ('Unit Testing') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-                    sh 'npm test'
-                }
-                junit allowEmptyResults: true, keepProperties: true, testResults: 'test-results.xml'
-                
+                sh 'npm test'
             }
         }
         stage ('Code Coverage') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-                    catchError(buildResult: 'SUCCESS', message: 'Code Coverage below threshold. Will be fixed soon!', stageResult: 'UNSTABLE') {
-                        sh 'npm run coverage'
+                catchError(buildResult: 'SUCCESS', message: 'Code Coverage below threshold. Will be fixed soon!', stageResult: 'UNSTABLE') {
+                    sh 'npm run coverage'
                     }
-                }
-                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './coverage/lcov-report', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                
             }
         }
         // stage ('Deploy Application') {
@@ -67,4 +64,10 @@ pipeline {
         //     }
         // }
     }
+    post {
+        always {
+            junit allowEmptyResults: true, keepProperties: true, testResults: 'test-results.xml'
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './coverage/lcov-report', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+        }
+}
 }
