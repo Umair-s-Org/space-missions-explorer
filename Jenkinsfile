@@ -8,6 +8,7 @@ pipeline {
         MONGO_DB_CREDS = credentials('Mongo-DB-Credentials')
         MONGO_USERNAME = "${MONGO_DB_CREDS_USR}"  // As the app needs environmental variable MONGO_USERNAME instead of MONGO_DB_CREDS_USR which will be created by the above 
         MONGO_PASSWORD = "${MONGO_DB_CREDS_PSW}"  // As the app needs environmental variable MONGO_PASSWORD instead of MONGO_DB_CREDS_PSW which will be created by the MONGO_DB_CREDS
+        SONAR_SCANNER_HOME = tool 'sonarqube-scanner-720'
     }
 
     stages {
@@ -55,6 +56,19 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', message: 'Code Coverage below threshold. Will be fixed soon!', stageResult: 'UNSTABLE') {
                     sh 'npm run coverage'
                     }
+                
+            }
+        }
+        stage ('SAST - SonarQube') {
+            steps {
+                sh 'echo $SONAR_SCANNER_HOME'
+                sh '''
+                $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                    -Dsonar.projectKey=Solar-System-Project \
+                    -Dsonar.sources=app.js \
+                    -Dsonar.host.url=http://100.99.178.107:9000 \
+                    -Dsonar.token=sqp_8da0cc03cdefc80d18df1850ad9732582cbecbc2
+                '''
                 
             }
         }
