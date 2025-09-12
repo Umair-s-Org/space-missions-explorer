@@ -77,6 +77,11 @@ pipeline {
                 
             }
         }
+        stage ('Build Docker Image') {
+            steps {
+                sh 'docker build -t umair112/solar-system:$GIT_COMMIT .'
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
