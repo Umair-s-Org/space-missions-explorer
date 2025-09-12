@@ -82,6 +82,41 @@ pipeline {
                 sh 'docker build -t umair112/solar-system:$GIT_COMMIT .'
             }
         }
+        stage ('Trivy Vulenarability Scanner') {
+            steps {
+                sh '''
+                    trivy image umair112/solar-system:$GIT_COMMIT \
+                    --severity LOW,MEDIUM \
+                    --exit-code 0 \
+                    --quiet \
+                    --format json -o trivy-image-MEDIUM-results.json
+                    trivy image umair112/solar-system:$GIT_COMMIT \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    --quiet \
+                    --format json -o trivy-image-CRITICAL-results.json
+                '''
+            }
+            post {
+                always {
+                    //Second file argument is the Input file which is to be converted to the first specified file
+                    sh '''  
+                        trivy convert \
+                        --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                        --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
+                        trivy convert \
+                        --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                        --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+                        trivy convert \
+                        --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                        --output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
+                        trivy convert \
+                        --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                        --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
+                    '''
+                }
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
