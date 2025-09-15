@@ -113,6 +113,13 @@ pipeline {
                 }
             }
         }
+        stage ('Push Docker Image') {
+            steps {
+                withDockerServer(credentialsId: 'docker-hub-credentials', url: "") {
+                    sh 'docker push umair112/solar-system:$GIT_COMMIT'
+                }
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
