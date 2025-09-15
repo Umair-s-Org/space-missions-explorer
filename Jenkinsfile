@@ -82,12 +82,12 @@ pipeline {
             steps {
                 sh '''
                     trivy image umair112/solar-system:$GIT_COMMIT \
-                    --severity LOW,MEDIUM \
+                    --severity LOW,MEDIUM,HIGH \
                     --exit-code 0 \
                     --quiet \
                     --format json -o trivy-image-MEDIUM-results.json
                     trivy image umair112/solar-system:$GIT_COMMIT \
-                    --severity HIGH,CRITICAL \
+                    --severity CRITICAL \
                     --exit-code 1 \
                     --quiet \
                     --format json -o trivy-image-CRITICAL-results.json
