@@ -120,6 +120,31 @@ pipeline {
                 }
             }
         }
+        stage ('Deploy - EC2 Instance') {
+            when {
+                branch 'feature/enabling-cicd'
+            }
+            steps {
+                script {
+                    sshagent(['aws-dev-deploy-ec2-instance']) {
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ec2-user@13.232.230.153 "
+                                if sudo docker ps -a | grep -q 'solar-system'; then
+                                    echo 'Container found. Stopping...'
+                                    sudo docker stop 'solar-system' && sudo docker rm 'solar-system'
+                                    echo 'Container stopped and removed.'
+                                fi
+                                    docker run --name solar-system \
+                                        -e MONGO_URI=$MONGO_URI
+                                        -e MONGO_USERNAME=$MONGO_USERNAME
+                                        -e MONGO_PASSWORD=$MONGO_PASSWORD
+                                        -p 3000:3000 -d umair112/solar-system:$GIT_COMMIT
+                            "
+                        '''
+                    }
+                }
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
