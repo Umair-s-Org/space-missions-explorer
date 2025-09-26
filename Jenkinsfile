@@ -10,6 +10,7 @@ pipeline {
         MONGO_USERNAME = "${MONGO_DB_CREDS_USR}"  // As the app needs environmental variable MONGO_USERNAME instead of MONGO_DB_CREDS_USR which will be created by the above 
         MONGO_PASSWORD = "${MONGO_DB_CREDS_PSW}"  // As the app needs environmental variable MONGO_PASSWORD instead of MONGO_DB_CREDS_PSW which will be created by the MONGO_DB_CREDS
         SONAR_SCANNER_HOME = tool 'sonarqube-scanner-720'
+        GIT_TOKEN = credentials('github-api-token')
     }
 
     stages {
@@ -146,6 +147,31 @@ pipeline {
                 }
             }
         }
+        stage ('K8s Update Image Tag') {
+            when {
+                branch 'PR*'
+            }
+            steps {
+                sh 'git clone -b main https://github.com/Umair-s-Org/solar-system-gitops-argocd-gitea.git'
+                dir("solar-system-gitops-argocd-gitea/kubernetes") {
+                    sh '''
+                        ### Replace Docker Tag ###
+                        git checkout main
+                        git checkout -b feature-$BUILD_ID
+                        sed -i "s#umair112.*#umair112/solar-system:$GIT_COMMIT#g" deployment.yml
+                        cat deployment.yml
+
+                        ### Commit and Push to Feature Branch ###
+                        git config --global user.email "Jenkins-CI@BOT.com"
+                        git remote set-url origin http://$GIT_TOKEN@github.com/Umair-s-Org/solar-system-gitops-argocd-gitea
+                        git add .
+                        git commit -am "Update Docker Image"
+                        git push -u origin feature-$BUILD_ID
+                    '''
+                }
+
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
@@ -154,6 +180,12 @@ pipeline {
     }
     post {
         always {
+            //Script to remove directory to make the pull successful each time in the K8s update image tag 
+            script {
+                if (fileExists('solar-system-gitops-argocd-gitea')) {
+                    sh 'rm -rf solar-system-gitops-argocd-gitea'
+                }
+            }
             junit allowEmptyResults: true, keepProperties: true, testResults: 'test-results.xml'
             junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
             junit allowEmptyResults: true, keepProperties: true, testResults: 'trivy-image-MEDIUM-results.xml'
