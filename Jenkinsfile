@@ -163,7 +163,7 @@ pipeline {
 
                         ### Commit and Push to Feature Branch ###
                         git config --global user.email "Jenkins-CI@BOT.com"
-                        git remote set-url origin http://$GIT_TOKEN@github.com/Umair-s-Org/solar-system-gitops-argocd-gitea
+                        git remote set-url origin https://$GIT_TOKEN@github.com/Umair-s-Org/solar-system-gitops-argocd-gitea
                         git add .
                         git commit -am "Update Docker Image"
                         git push -u origin feature-$BUILD_ID
