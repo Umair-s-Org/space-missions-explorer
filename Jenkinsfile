@@ -148,9 +148,9 @@ pipeline {
         //     }
         // }
         stage ('K8s Update Image Tag') {
-            when {
-                branch 'PR*'
-            }
+            // when {
+            //     branch 'PR*'
+            // }
             steps {
                 sh 'git clone -b main https://github.com/Umair-s-Org/solar-system-gitops-argocd-gitea.git'
                 dir("solar-system-gitops-argocd-gitea/kubernetes") {
