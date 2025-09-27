@@ -172,6 +172,25 @@ pipeline {
 
             }
         }
+        stage ('K8s - Raise PR') {
+            // when {
+            //     branch 'PR*'
+            // }
+            steps {
+                  sh """
+                    curl -X POST \\
+                      -H "Authorization: Bearer $GIT_TOKEN" \\
+                      -H "Accept: application/vnd.github+json" \\
+                      https://api.github.com/repos/Umair-s-Org/solar-system-gitops-argocd-gitea/pulls \\
+                      -d '{
+                            "title": "Update Docker image tag to commit $GIT_COMMIT",
+                            "head": "feature-$BUILD_ID",
+                            "base": "main",
+                            "body": "Automatically updated DockeImage in the deployment manifest via CI"
+                          }'
+                    """
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
