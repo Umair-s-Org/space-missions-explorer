@@ -192,9 +192,9 @@ pipeline {
             }
         }
         stage('App Deployed?') {
-            when {
-              branch 'PR*'
-            }
+            // when {
+            //   branch 'PR*'
+            // }
             steps {
               timeout(time: 1, unit: 'DAYS') {
                 input message: 'Has the PR been merged and Argo CD synced?',
