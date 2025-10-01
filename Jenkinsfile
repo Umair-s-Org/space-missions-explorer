@@ -202,6 +202,39 @@ pipeline {
               }
             }
         }
+        // stage('Upload - AWS S3') {
+        //   when {
+        //     branch 'PR*'
+        //   }
+        //   steps {
+        //     withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'us-east-2') {
+        //       sh '''
+        //         ls -ltr
+        //         mkdir reports-$BUILD_ID
+        //         cp -rf coverage/ reports-$BUILD_ID/
+        //         cp dependency* test-results.xml trivy*.* zap*.* reports-$BUILD_ID/
+        //         ls -ltr reports-$BUILD_ID/
+        //       '''
+        //       s3Upload(
+        //         file: "reports-$BUILD_ID",
+        //         bucket: 'solar-system-jenkins-reports-bucket',
+        //         path: "jenkins-$BUILD_ID/"
+        //       )
+        //     }
+        //   }
+        // }
+        stage('Deploy to Prod?') {
+            when {
+                branch 'main'
+            }
+            steps {
+                timeout(time: 1, unit: 'DAYS') {
+                    input message: 'Deploy to Production?',
+                          ok: 'YES! Let us try this on Production',
+                          submitter: 'admin'
+                }
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
