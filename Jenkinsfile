@@ -211,6 +211,28 @@ pipeline {
                 '''
             }
         }
+        stage('Lambda - Invoke Function') {
+            when {
+                branch 'main'
+            }
+            steps {
+                withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'ap-south-1') {
+                    sh '''
+                        # Wait for Lambda to stabilize
+                        sleep 30s
+
+                        # Fetch the function URL configuration
+                        function_url_data=$(aws lambda get-function-url-config --function-name solar-system-function)
+
+                        # Extract and normalize the FunctionUrl
+                        function_url=$(echo $function_url_data | jq -r '.FunctionUrl | sub("/$"; "")')
+
+                        # Send a HEAD request to the /live endpoint and check for 200 OK
+                        curl -Is $function_url/live | grep -i "200 OK"
+                    '''
+                }
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
