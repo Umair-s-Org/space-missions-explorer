@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const app = express();
 const cors = require('cors')
-const serverless = require(http-serverless)
+const serverless = require('serverless-http')
 
 
 app.use(bodyParser.json());
