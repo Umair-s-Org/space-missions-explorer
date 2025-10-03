@@ -175,8 +175,8 @@ pipeline {
         stage('Lambda - S3 Upload & Deploy') {
             when { branch 'main' }
             steps {
-                withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'us-east-2') {
-                    sh '''
+                withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'ap-south-1') {
+                    sh """
                         echo "----- Before Modification -----"
                         tail -5 app.js
                         echo "----- Modifying app.js for Lambda -----"
@@ -185,7 +185,7 @@ pipeline {
                         -e 's/^\/\/module.exports.handler = serverless(app)/module.exports.handler = serverless(app)/' app.js
                         echo "----- After Modification -----"
                         tail -5 app.js
-                    '''
+                    """
                     sh '''
                         echo "----- Creating deployment package -----"
                         zip -qr solar-system-lambda-${BUILD_ID}.zip app* package* index.html node*
