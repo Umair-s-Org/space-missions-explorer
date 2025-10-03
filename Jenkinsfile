@@ -181,11 +181,12 @@ pipeline {
                         tail -5 app.js
                         echo "----- Modifying app.js for Lambda -----"
                         sed -i -e 's/^app.listen/\/\/app.listen/' \
-                        -e 's/^module.exports = app;/\/\/module.exports = app;/' \
-                        -e 's/^\/\/module.exports.handler = serverless(app)/module.exports.handler = serverless(app)/' app.js
+                               -e 's/^module.exports = app;/\/\/module.exports = app;/' \
+                               -e 's/^\/\/module.exports.handler = serverless(app)/module.exports.handler = serverless(app)/' app.js
                         echo "----- After Modification -----"
                         tail -5 app.js
                     """
+
                     sh '''
                         echo "----- Creating deployment package -----"
                         zip -qr solar-system-lambda-${BUILD_ID}.zip app* package* index.html node*
