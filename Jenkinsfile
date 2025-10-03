@@ -197,11 +197,11 @@ pipeline {
                         bucket: 'solar-system-lambda-bucket-demo'
                     )
                 }
-                sh '''
+                sh """
                 aws lambda update-function-configuration \
                     --function-name solar-system-function \
                     --environment '{"Variables":{"MONGO_USERNAME":"${MONGO_USERNAME}","MONGO_PASSWORD":"${MONGO_PASSWORD}","MONGO_URI":"${MONGO_URI}"}}'
-                '''
+                """
                 sh '''
                     echo "----- Updating Lambda function code -----"
                     aws lambda update-function-code \
