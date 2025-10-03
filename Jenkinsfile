@@ -172,6 +172,39 @@ pipeline {
 
             }
         }
+        stage('Lambda - S3 Upload & Deploy') {
+            when { branch 'main' }
+            steps {
+                withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'us-east-2') {
+                    sh '''
+                        echo "----- Before Modification -----"
+                        tail -5 app.js
+                        echo "----- Modifying app.js for Lambda -----"
+                        sed -i -e 's/^app.listen/\/\/app.listen/' \
+                        -e 's/^module.exports = app;/\/\/module.exports = app;/' \
+                        -e 's/^\/\/module.exports.handler = serverless(app)/module.exports.handler = serverless(app)/' app.js
+                        echo "----- After Modification -----"
+                        tail -5 app.js
+                    '''
+                    sh '''
+                        echo "----- Creating deployment package -----"
+                        zip -qr solar-system-lambda-${BUILD_ID}.zip app* package* index.html node*
+                        ls -ltr solar-system-lambda-${BUILD_ID}.zip
+                    '''
+                    s3Upload(
+                        file: "solar-system-lambda-${BUILD_ID}.zip",
+                        bucket: 'solar-system-lambda-bucket-demo'
+                    )
+                }
+                sh '''
+                    echo "----- Updating Lambda function code -----"
+                    aws lambda update-function-code \
+                        --function-name solar-system-function \
+                        --s3-bucket solar-system-lambda-bucket-demo \
+                        --s3-key solar-system-lambda-${BUILD_ID}.zip
+                '''
+            }
+        }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
