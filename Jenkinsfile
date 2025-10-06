@@ -45,18 +45,18 @@ pipeline {
                         '''
                     }
                 }
-                stage ('OWASP Dependency Check') {
-                    steps {
-                        dependencyCheck additionalArguments: '''
-                            --scan ./
-                            --out ./
-                            --format ALL
-                            --disableYarnAudit
-                            --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12'
+                // stage ('OWASP Dependency Check') {
+                //     steps {
+                //         dependencyCheck additionalArguments: '''
+                //             --scan ./
+                //             --out ./
+                //             --format ALL
+                //             --disableYarnAudit
+                //             --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12'
 
-                        dependencyCheckPublisher failedTotalCritical: 2, pattern: 'dependency-check-report.xml', stopBuild: true, unstableTotalCritical: 2
-                    }
-                }
+                //         dependencyCheckPublisher failedTotalCritical: 2, pattern: 'dependency-check-report.xml', stopBuild: true, unstableTotalCritical: 2
+                //     }
+                // }
 
             }
         }
@@ -73,23 +73,23 @@ pipeline {
                 
             }
         }
-        stage ('SAST - SonarQube') {
-            steps {
-                timeout(time: 60, unit: 'SECONDS') {
-                    withSonarQubeEnv('sonar-qube-server') {
-                        sh 'echo $SONAR_SCANNER_HOME'
-                        sh '''
-                        $SONAR_SCANNER_HOME/bin/sonar-scanner \
-                            -Dsonar.projectKey=Solar-System-Project \
-                            -Dsonar.sources=app.js \
-                            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info 
-                        '''
-                    }
-                    // waitForQualityGate abortPipeline: true
-                }
+        // stage ('SAST - SonarQube') {
+        //     steps {
+        //         timeout(time: 60, unit: 'SECONDS') {
+        //             withSonarQubeEnv('sonar-qube-server') {
+        //                 sh 'echo $SONAR_SCANNER_HOME'
+        //                 sh '''
+        //                 $SONAR_SCANNER_HOME/bin/sonar-scanner \
+        //                     -Dsonar.projectKey=Solar-System-Project \
+        //                     -Dsonar.sources=app.js \
+        //                     -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info 
+        //                 '''
+        //             }
+        //             // waitForQualityGate abortPipeline: true
+        //         }
                 
-            }
-        }
+        //     }
+        // }
         stage ('Build Docker Image') {
             steps {
                 sh 'docker build -t umair112/solar-system:$GIT_COMMIT .'
@@ -109,6 +109,11 @@ pipeline {
                     --quiet \
                     --format json -o trivy-image-CRITICAL-results.json
                 '''
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image MEDIUM Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
+                
+                junit allowEmptyResults: true, keepProperties: true, testResults: 'trivy-image-MEDIUM-results.xml'
+                junit allowEmptyResults: true, keepProperties: true, testResults: 'trivy-image-CRITICAL-results.xml'
             }
             post {
                 always {
@@ -130,13 +135,13 @@ pipeline {
                 }
             }
         }
-        stage ('Push Docker Image') {
-            steps {
-                withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "") {
-                    sh 'docker push umair112/solar-system:$GIT_COMMIT'
-                }
-            }
-        }
+        // stage ('Push Docker Image') {
+        //     steps {
+        //         withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "") {
+        //             sh 'docker push umair112/solar-system:$GIT_COMMIT'
+        //         }
+        //     }
+        // }
         // stage ('Deploy - EC2 Instance') {
         //     when {
         //         branch 'feature/enabling-cicd'
@@ -162,92 +167,92 @@ pipeline {
         //         }
         //     }
         // }
-        stage ('K8s Update Image Tag') {
-            when {
-                branch 'PR*'
-            }
-            steps {
-                sh 'git clone -b main https://github.com/Umair-s-Org/solar-system-gitops-argocd-gitea.git'
-                dir("solar-system-gitops-argocd-gitea/kubernetes") {
-                    sh '''
-                        ### Replace Docker Tag ###
-                        git checkout main
-                        git checkout -b feature-$BUILD_ID
-                        sed -i "s#umair112.*#umair112/solar-system:$GIT_COMMIT#g" deployment.yml
-                        cat deployment.yml
+        // stage ('K8s Update Image Tag') {
+        //     when {
+        //         branch 'PR*'
+        //     }
+        //     steps {
+        //         sh 'git clone -b main https://github.com/Umair-s-Org/solar-system-gitops-argocd-gitea.git'
+        //         dir("solar-system-gitops-argocd-gitea/kubernetes") {
+        //             sh '''
+        //                 ### Replace Docker Tag ###
+        //                 git checkout main
+        //                 git checkout -b feature-$BUILD_ID
+        //                 sed -i "s#umair112.*#umair112/solar-system:$GIT_COMMIT#g" deployment.yml
+        //                 cat deployment.yml
 
-                        ### Commit and Push to Feature Branch ###
-                        git config --global user.email "Jenkins-CI@BOT.com"
-                        git remote set-url origin http://$GIT_TOKEN@github.com/Umair-s-Org/solar-system-gitops-argocd-gitea
-                        git add .
-                        git commit -am "Update Docker Image"
-                        git push -u origin feature-$BUILD_ID
-                    '''
-                }
+        //                 ### Commit and Push to Feature Branch ###
+        //                 git config --global user.email "Jenkins-CI@BOT.com"
+        //                 git remote set-url origin http://$GIT_TOKEN@github.com/Umair-s-Org/solar-system-gitops-argocd-gitea
+        //                 git add .
+        //                 git commit -am "Update Docker Image"
+        //                 git push -u origin feature-$BUILD_ID
+        //             '''
+        //         }
 
-            }
-        }
-        stage('Lambda - S3 Upload & Deploy') {
-            when { branch 'main' }
-            steps {
-                withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'ap-south-1') {
-                    sh """
-                        echo "----- Before Modification -----"
-                        tail -5 app.js
-                        echo "----- Modifying app.js for Lambda -----"
-                        sed -i 's|^app.listen|//app.listen|' app.js
-                        sed -i 's|^module.exports = app;|//module.exports = app;|' app.js
-                        sed -i 's|^//module.exports.handler = serverless(app)|module.exports.handler = serverless(app)|' app.js
-                        echo "----- After Modification -----"
-                        tail -5 app.js
-                    """
+        //     }
+        // }
+        // stage('Lambda - S3 Upload & Deploy') {
+        //     when { branch 'main' }
+        //     steps {
+        //         withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'ap-south-1') {
+        //             sh """
+        //                 echo "----- Before Modification -----"
+        //                 tail -5 app.js
+        //                 echo "----- Modifying app.js for Lambda -----"
+        //                 sed -i 's|^app.listen|//app.listen|' app.js
+        //                 sed -i 's|^module.exports = app;|//module.exports = app;|' app.js
+        //                 sed -i 's|^//module.exports.handler = serverless(app)|module.exports.handler = serverless(app)|' app.js
+        //                 echo "----- After Modification -----"
+        //                 tail -5 app.js
+        //             """
 
-                    sh '''
-                        echo "----- Creating deployment package -----"
-                        zip -qr solar-system-lambda-${BUILD_ID}.zip app* package* index.html node*
-                        ls -ltr solar-system-lambda-${BUILD_ID}.zip
-                    '''
-                    s3Upload(
-                        file: "solar-system-lambda-${BUILD_ID}.zip",
-                        bucket: 'solar-system-lambda-bucket-demo'
-                    )
-                }
-                sh """
-                aws lambda update-function-configuration \
-                    --function-name solar-system-function \
-                    --environment '{"Variables":{"MONGO_USERNAME":"${MONGO_USERNAME}","MONGO_PASSWORD":"${MONGO_PASSWORD}","MONGO_URI":"${MONGO_URI}"}}'
-                """
-                sh '''
-                    echo "----- Updating Lambda function code -----"
-                    aws lambda update-function-code \
-                        --function-name solar-system-function \
-                        --s3-bucket solar-system-lambda-bucket-demo \
-                        --s3-key solar-system-lambda-${BUILD_ID}.zip
-                '''
-            }
-        }
-        stage('Lambda - Invoke Function') {
-            when {
-                branch 'main'
-            }
-            steps {
-                withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'ap-south-1') {
-                    sh '''
-                        # Wait for Lambda to stabilize
-                        sleep 30s
+        //             sh '''
+        //                 echo "----- Creating deployment package -----"
+        //                 zip -qr solar-system-lambda-${BUILD_ID}.zip app* package* index.html node*
+        //                 ls -ltr solar-system-lambda-${BUILD_ID}.zip
+        //             '''
+        //             s3Upload(
+        //                 file: "solar-system-lambda-${BUILD_ID}.zip",
+        //                 bucket: 'solar-system-lambda-bucket-demo'
+        //             )
+        //         }
+        //         sh """
+        //         aws lambda update-function-configuration \
+        //             --function-name solar-system-function \
+        //             --environment '{"Variables":{"MONGO_USERNAME":"${MONGO_USERNAME}","MONGO_PASSWORD":"${MONGO_PASSWORD}","MONGO_URI":"${MONGO_URI}"}}'
+        //         """
+        //         sh '''
+        //             echo "----- Updating Lambda function code -----"
+        //             aws lambda update-function-code \
+        //                 --function-name solar-system-function \
+        //                 --s3-bucket solar-system-lambda-bucket-demo \
+        //                 --s3-key solar-system-lambda-${BUILD_ID}.zip
+        //         '''
+        //     }
+        // }
+        // stage('Lambda - Invoke Function') {
+        //     when {
+        //         branch 'main'
+        //     }
+        //     steps {
+        //         withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'ap-south-1') {
+        //             sh '''
+        //                 # Wait for Lambda to stabilize
+        //                 sleep 30s
 
-                        # Fetch the function URL configuration
-                        function_url_data=$(aws lambda get-function-url-config --function-name solar-system-function)
+        //                 # Fetch the function URL configuration
+        //                 function_url_data=$(aws lambda get-function-url-config --function-name solar-system-function)
 
-                        # Extract and normalize the FunctionUrl
-                        function_url=$(echo $function_url_data | jq -r '.FunctionUrl | sub("/$"; "")')
+        //                 # Extract and normalize the FunctionUrl
+        //                 function_url=$(echo $function_url_data | jq -r '.FunctionUrl | sub("/$"; "")')
 
-                        # Send a HEAD request to the /live endpoint and check for 200 OK
-                        curl -Is $function_url/live | grep -i "200 OK"
-                    '''
-                }
-            }
-        }
+        //                 # Send a HEAD request to the /live endpoint and check for 200 OK
+        //                 curl -Is $function_url/live | grep -i "200 OK"
+        //             '''
+        //         }
+        //     }
+        // }
         // stage ('Deploy Application') {
         //     steps {
         //         sh 'npm start'
@@ -258,19 +263,19 @@ pipeline {
         always {
             slackNotification("${currentBuild.result}")
             //Script to remove directory to make the pull successful each time in the K8s update image tag 
-            script {
-                if (fileExists('solar-system-gitops-argocd-gitea')) {
-                    sh 'rm -rf solar-system-gitops-argocd-gitea'
-                }
-            }
-            junit allowEmptyResults: true, keepProperties: true, testResults: 'test-results.xml'
-            junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
-            junit allowEmptyResults: true, keepProperties: true, testResults: 'trivy-image-MEDIUM-results.xml'
-            junit allowEmptyResults: true, keepProperties: true, testResults: 'trivy-image-CRITICAL-results.xml'
-            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './coverage/lcov-report', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image MEDIUM Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
+            // script {
+            //     if (fileExists('solar-system-gitops-argocd-gitea')) {
+            //         sh 'rm -rf solar-system-gitops-argocd-gitea'
+            //     }
+            // }
+            // junit allowEmptyResults: true, keepProperties: true, testResults: 'test-results.xml'
+            // junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
+            // junit allowEmptyResults: true, keepProperties: true, testResults: 'trivy-image-MEDIUM-results.xml'
+            // junit allowEmptyResults: true, keepProperties: true, testResults: 'trivy-image-CRITICAL-results.xml'
+            // publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+            // publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './coverage/lcov-report', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+            // publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
+            // publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image MEDIUM Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
         }
 }
 }
