@@ -84,12 +84,15 @@ pipeline {
         }
         stage ('Trivy Vulenarability Scanner') {
             steps {
-                trivyScan.vulenarability("umair112/solar-system:$GIT_COMMIT")
+                script {
+                    trivyScan.vulenarability("umair112/solar-system:$GIT_COMMIT")
+                }
             }
             post {
                 always {
-                    //Second file argument is the Input file which is to be converted to the first specified file
-                    trivyScan.reportsConverter()
+                    script {
+                        trivyScan.reportsConverter()
+                    }
                 }
             }
         }
