@@ -85,7 +85,10 @@ pipeline {
         stage ('Trivy Vulenarability Scanner') {
             steps {
                 script {
-                    trivyScan.vulenarability("umair112/solar-system:$GIT_COMMIT")
+                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "LOW", exitCode: "0")
+                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "MEDIUM", exitCode: "0")
+                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "HIGH", exitCode: "0")
+                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "CRITICAL", exitCode: "1")
                 }
             }
             post {
@@ -93,6 +96,8 @@ pipeline {
                     script {
                         trivyScan.reportsConverter()
                     }
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image MEDIUM Vulnerability Report', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
