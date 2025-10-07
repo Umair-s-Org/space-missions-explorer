@@ -85,10 +85,10 @@ pipeline {
         stage ('Trivy Vulenarability Scanner') {
             steps {
                 script {
-                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "LOW", exitCode: "0")
-                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "MEDIUM", exitCode: "0")
-                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "HIGH", exitCode: "0")
-                    trivyScanScript.vulenarability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "CRITICAL", exitCode: "1")
+                    trivyScanScript.vulnerability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "LOW", exitCode: "0")
+                    trivyScanScript.vulnerability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "MEDIUM", exitCode: "0")
+                    trivyScanScript.vulnerability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "HIGH", exitCode: "0")
+                    trivyScanScript.vulnerability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "CRITICAL", exitCode: "1")
                 }
             }
             post {
