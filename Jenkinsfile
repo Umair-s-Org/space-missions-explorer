@@ -1,7 +1,14 @@
 @Library('jenkins-shared-library@featureTrivyScan') _
 
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+          cloud 'k8s'
+          yamlFile 'k8s-agent.yaml'
+          defaultContainer 'node-18'
+          namespace 'jenkins'
+        }
+    }
     tools {
         nodejs 'nodejs-24'
     }
@@ -78,11 +85,13 @@ pipeline {
         //     }
         // }
         stage ('Build Docker Image') {
+            agent any
             steps {
                 sh 'docker build -t umair112/solar-system:$GIT_COMMIT .'
             }
         }
         stage ('Trivy Vulenarability Scanner') {
+            agent any
             steps {
                 script {
                     trivyScanScript.vulnerability(imageName: "umair112/solar-system:$GIT_COMMIT", severity: "LOW", exitCode: "0")
