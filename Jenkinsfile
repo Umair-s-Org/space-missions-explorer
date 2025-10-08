@@ -68,6 +68,18 @@ pipeline {
                         }
                     }
                 }
+                stage('NodeJS 20') {
+                  agent {
+                    docker {
+                      image 'node:20-alpine'
+                    }
+                  }
+                  options { retry(2) }
+                  steps {
+                    sh 'node -v'
+                    sh 'npm test'
+                  }
+                }
             }
         }
         stage ('Code Coverage') {
