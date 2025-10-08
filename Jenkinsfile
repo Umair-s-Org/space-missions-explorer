@@ -55,8 +55,19 @@ pipeline {
             }
         }
         stage ('Unit Testing') {
-            steps {
-                sh 'npm test'
+            parallel {
+                stage ('Unit Testing on node-18') {
+                    steps {
+                        sh 'npm test'
+                    }
+                }
+                stage ('Unit Testing on node-19') {
+                    steps {
+                        container('node-19') {
+                            sh 'npm test'
+                        }
+                    }
+                }
             }
         }
         stage ('Code Coverage') {
@@ -226,11 +237,6 @@ pipeline {
         //                 curl -Is $function_url/live | grep -i "200 OK"
         //             '''
         //         }
-        //     }
-        // }
-        // stage ('Deploy Application') {
-        //     steps {
-        //         sh 'npm start'
         //     }
         // }
     }
