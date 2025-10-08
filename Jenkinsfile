@@ -78,7 +78,7 @@ pipeline {
                   options { retry(2) }
                   steps {
                     sh 'node -v'
-                    unstash 'npm-libraries-installed'
+                    unstash 'npm-installed-libraries'
                     sh 'npm test'
                   }
                 }
