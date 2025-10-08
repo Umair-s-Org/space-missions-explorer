@@ -24,10 +24,20 @@ pipeline {
 
     stages {
         stage ('Install Dependencies') {
+            agent any
             steps {
-                sh 'npm install --no-audit'
-                sh 'node seed.js' //Add data into DB
-                stash includes: 'node_modules/**', name: 'npm-installed-libraries'
+                cache(caches: [
+                    arbitraryFileCache(
+                        cacheName: 'npm-dependency-cache',
+                        cacheValidityDecidingFile: 'package-lock.json',
+                        includes: '**/*',
+                        excludes: '',
+                        path: 'node_modules'
+                    )], defaultBranch: '', maxCacheSize: 550) {
+                            sh 'npm install --no-audit'
+                            sh 'node seed.js' //Add data into DB
+                            stash includes: 'node_modules/**', name: 'npm-installed-libraries'
+                            }
             }
         }
         stage ('Dependency Scanning') {
