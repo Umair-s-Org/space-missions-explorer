@@ -27,7 +27,7 @@ pipeline {
             steps {
                 sh 'npm install --no-audit'
                 sh 'node seed.js' //Add data into DB
-                stash includes: 'node_modules', name: 'npm-installed-libraries'
+                stash includes: 'node_modules/**', name: 'npm-installed-libraries'
             }
         }
         stage ('Dependency Scanning') {
