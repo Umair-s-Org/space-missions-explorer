@@ -69,12 +69,14 @@ pipeline {
             parallel {
                 stage ('Unit Testing on node-18') {
                     steps {
+                        unstash 'npm-installed-libraries'
                         sh 'npm test'
                     }
                 }
                 stage ('Unit Testing on node-19') {
                     steps {
                         container('node-19') {
+                            unstash 'npm-installed-libraries'
                             sh 'npm test'
                         }
                     }
