@@ -13,7 +13,7 @@ pipeline {
         nodejs 'nodejs-24'
     }
     environment {
-        MONGO_URI = "mongodb://admin:secret@localhost:27017/mydb?authSource=admin"
+        MONGO_URI = "mongodb://admin:secret@100.99.178.107:27017/mydb?authSource=admin"
         MONGO_URI_DOCKER = "mongodb://admin:secret@my-mongo:27017/mydb?authSource=admin"
         MONGO_DB_CREDS = credentials('Mongo-DB-Credentials')
         MONGO_USERNAME = "${MONGO_DB_CREDS_USR}"  // As the app needs environmental variable MONGO_USERNAME instead of MONGO_DB_CREDS_USR which will be created by the above 
