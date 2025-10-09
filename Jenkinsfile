@@ -46,7 +46,7 @@ node('jenkins-ubuntu-agent') {
         }
     }
     stage ('Unit Testing') {
-        node(label 'nodejs-pod') {
+        node('nodejs-pod') {
             container('node-18') {
                 checkout scm
                 withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
