@@ -49,6 +49,7 @@ node('jenkins-ubuntu-agent') {
         node('nodejs-pod') {
             container('node-18') {
                 checkout scm
+                npm-installed-libraries
                 withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
                     sh 'node -v'
                     sh 'npm test'
