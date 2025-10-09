@@ -1,3 +1,25 @@
+podTemplate(
+    cloud: 'k8s', 
+    label: 'nodejs-pod', 
+    containers: [
+        containerTemplate(
+            args: '9999999', 
+            command: 'sleep', 
+            image: 'node:18-alpine', 
+            name: 'node-18', 
+            ttyEnabled: true, 
+            priviliged: true,
+            workingDir: '/home/jenkins/agent'),
+            containerTemplate(
+            args: '9999999', 
+            command: 'sleep', 
+            image: 'node:19-alpine', 
+            name: 'node-19', 
+            ttyEnabled: true, 
+            priviliged: true,
+            workingDir: '/home/jenkins/agent')])
+{
+
 node('jenkins-ubuntu-agent') {
     env.NODEJS_HOME = "${tool 'nodejs-24'}"
     env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
@@ -23,10 +45,16 @@ node('jenkins-ubuntu-agent') {
                         }
         }
     }
-    withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-        stage ('Unit Testing') {
-            sh 'node -v'
-            sh 'npm test'
+    stage ('Unit Testing') {
+        node(label 'nodejs-pod') {
+            container('node-18') {
+                checkout scm
+                withCredentials([usernamePassword(credentialsId: 'Mongo-DB-Credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                    sh 'node -v'
+                    sh 'npm test'
+                }
+            }
         }
     }
+}
 }
