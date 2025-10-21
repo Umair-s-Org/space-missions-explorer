@@ -36,20 +36,19 @@ var dataSchema = new Schema({
     velocity: String,
     distance: String
 });
-var planetModel = mongoose.model('planets', dataSchema);
+var missionModel = mongoose.model('missions', dataSchema);
 
 
 
-app.post('/planet',   function(req, res) {
-   // console.log("Received Planet ID " + req.body.id)
-    planetModel.findOne({
+app.post('/mission',   function(req, res) {
+   // console.log("Received Mission ID " + req.body.id)
+    missionModel.findOne({
         id: req.body.id
-    }, function(err, planetData) {
+    }, function(err, missionData) {
         if (err) {
-            alert("Ooops, We only have 9 planets and a sun. Select a number from 0 - 9")
-            res.send("Error in Planet Data")
+            res.send("Error in Mission Data")
         } else {
-            res.send(planetData);
+            res.send(missionData);
         }
     })
 })

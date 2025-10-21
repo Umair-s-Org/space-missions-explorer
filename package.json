@@ -1,8 +1,8 @@
 {
-  "name": "Solar System",
-  "version": "6.7.6",
-  "author": "Siddharth Barahalikar <barahalikar.siddharth@gmail.com>",
-  "homepage": "https://www.linkedin.com/in/barahalikar-siddharth/",
+  "name": "space-missions-explorer",
+  "version": "1.0.0",
+  "author": "Your Name <your.email@example.com>",
+  "homepage": "https://github.com/yourusername",
   "license": "MIT",
   "scripts": {
     "start": "node app.js",

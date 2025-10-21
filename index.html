@@ -19,88 +19,202 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
       <meta name='viewport' content='width=device-width, initial-scale=1'>
-      <title>Solar System - Sid</title>
-      <link rel="icon" type="image/x-icon" href="https://gitlab.com/sidd-harth/solar-system/-/raw/main/images/saturn.png">
+      <title>Space Missions Explorer</title>
+      <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/200px-NASA_logo.svg.png">
       <style> 
-         #planetImage { 
-            background: url('https://gitlab.com/sidd-harth/solar-system/-/raw/main/images/solar-system.png')   center center; 
+         #missionImage { 
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/500px-NASA_logo.svg.png') center center; 
             background-repeat: no-repeat;			   
-            background-size: cover; 
+            background-size: contain; 
             content: ''; 
-            position: static; 
-            animation: spin 25s linear infinite; 
+            position: relative; 
             width: 50vw; 
-            height: 50vw; 
-         } 
-         @keyframes spin { 
-             100% { transform: rotate(360deg); } 
-         } 
+            height: 50vw;
+            max-width: 500px;
+            max-height: 500px;
+            min-width: 300px;
+            min-height: 300px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            margin: 20px auto;
+            display: block;
+         }
+         
+         #missionImage:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+         }
+         
+         .image-loading {
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0) !important;
+            animation: pulse 1.5s ease-in-out infinite alternate;
+         }
+         
+         @keyframes pulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+         }
+         
          body { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: url('images/background.gif'); 
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+         }
+         
+         .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+         }
+         
+         .input-section {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+         }
+         
+         .content-section {
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+         }
+         
+         .mission-info {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+         }
+         
+         .gallery-item:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2) !important;
+         }
+         
+         .gallery-item.selected {
+            background: rgba(247, 145, 95, 0.3) !important;
+            border: 2px solid rgb(247, 145, 95);
          } 
-         /*.shadow { 
-         animation: rainbow 2s linear infinite; 
-         } */ 
       </style>
    </head>
    <body>
 
-      <div>
-        <div>
+      <div class="main-container">
+        <div style="text-align: center; margin-bottom: 20px;">
          <a href="index.html">
             <button
-               style=" font-size: 40px; 
+               style=" font-size: 36px; 
                    background: rgb(50,43,167);
                    background: linear-gradient(90deg, rgba(50,43,167,1) 0%, rgba(82,41,124,1) 0%, rgba(137,26,205,1) 100%);
                    color:white;
                    font-family: 'Orbitron', sans-serif;
                    border-radius: 25px;     
                    border: 2px solid rgb(35, 34, 36);    
-                   width: 600px; 
-                   height: 70px;
+                   width: 700px; 
+                   height: 80px;
                    text-align: center;
-                   line-height: initial;
-                   border-width: 1px 1px 3px"> SOLAR <i class="fa fa-rocket"></i> SYSTEM 5.0 </button> 
+                   line-height: 1.2;
+                   padding: 10px;
+                   white-space: nowrap;
+                   border-width: 1px 1px 3px;
+                   cursor: pointer;"> SPACE <i class="fa fa-rocket"></i> MISSIONS EXPLORER </button> 
             </a>
            
         </div>
-        <br>
-         <input type="submit"  id="submit" value="Search the Planet" 
-         style="float: right;
-             background-color:rgb(187, 75, 243);
+        
+        <!-- Input Section with Fixed Position -->
+        <div class="input-section">
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center;">
+         <input type="submit"  id="submit" value="Explore Mission" 
+         style="background-color:rgb(187, 75, 243);
              color:white;
              font-family: 'Ubuntu';
              border-radius: 25px;     
              border: 2px solid #609;    
              padding: 20px; 
              width: 200px; 
-             text-align:center;" /> 
-         <div style="overflow: hidden; padding-right: .5em;" > 
-            <input type="number" id="planetID" name="number" 
-            style="width: 100%;
+             text-align:center;
+             cursor: pointer;
+             font-size: 16px;
+             flex-shrink: 0;" /> 
+         <input type="number" id="missionID" name="number" 
+            style="flex: 1;
+            min-width: 250px;
             background-color:rgb(218, 204, 226);
             text-align:center; 
             border-radius: 25px;     
             border: 2px solid #609;    
-            padding: 20px;" placeholder="Enter a number(0 - 8) to view the planets"/> 
+            padding: 20px; 
+            font-size: 16px;" placeholder="Enter a number(1 - 8) to explore missions"/> 
+        </div>
+        </div>
+         
+         <!-- Content Section -->
+         <div class="content-section">
+         <!-- Mission Gallery Preview -->
+         <div class="mission-gallery" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 15px; backdrop-filter: blur(10px);">
+            <h3 style="width: 100%; text-align: center; color: rgb(247, 145, 95); font-family: 'Encode Sans'; margin-bottom: 15px;">Quick Mission Gallery</h3>
+            <div class="gallery-item" onclick="selectMission(1)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/9/98/Aldrin_Apollo_11_original.jpg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">1. Apollo 11</small>
+            </div>
+            <div class="gallery-item" onclick="selectMission(2)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://images-assets.nasa.gov/image/PIA21895/PIA21895~orig.jpg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">2. Voyager 1</small>
+            </div>
+            <div class="gallery-item" onclick="selectMission(3)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://images-assets.nasa.gov/image/PIA16239/PIA16239~orig.jpg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">3. Curiosity</small>
+            </div>
+            <div class="gallery-item" onclick="selectMission(4)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/HST-SM4.jpeg/800px-HST-SM4.jpeg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">4. Hubble</small>
+            </div>
+            <div class="gallery-item" onclick="selectMission(5)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://images-assets.nasa.gov/image/PIA08329/PIA08329~orig.jpg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">5. Cassini</small>
+            </div>
+            <div class="gallery-item" onclick="selectMission(6)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://images-assets.nasa.gov/image/PIA20037/PIA20037~orig.jpg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">6. New Horizons</small>
+            </div>
+            <div class="gallery-item" onclick="selectMission(7)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000393/GSFC_20171208_Archive_e000393~orig.jpg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">7. James Webb</small>
+            </div>
+            <div class="gallery-item" onclick="selectMission(8)" style="cursor: pointer; text-align: center; padding: 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); transition: transform 0.2s;">
+                <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/International_Space_Station_after_undocking_of_STS-132.jpg/800px-International_Space_Station_after_undocking_of_STS-132.jpg') center/cover; border-radius: 8px; margin: 0 auto 5px;"></div>
+                <small style="color: white; font-family: 'Ubuntu'; font-size: 10px;">8. ISS</small>
+            </div>
          </div>
-         <div class="middle">
-            <h1 style="color:rgb(247, 145, 95); font-family: 'Encode Sans';" id="planetName"> Solar System </h1>
+         <div class="middle mission-info">
+            <h1 style="color:rgb(247, 145, 95); font-family: 'Encode Sans'; text-align: center; margin: 20px 0;" id="missionName"> Space Missions </h1>
          </div>
-         <div class="bottomleft">
-            <p  style="color:rgb(224, 224, 224); font-family: 'Ubuntu';" id="planetDescription"> Solar system consists of our star, the Sun, and everything bound to it by gravity – <br> the planets Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune; <br> dwarf planets such as Pluto; dozens of moons; and millions <br> of asteroids, comets, and meteoroids.</p>
+         <div class="bottomleft mission-info">
+            <p style="color:rgb(224, 224, 224); font-family: 'Ubuntu'; line-height: 1.6; text-align: justify;" id="missionDescription"> Explore humanity's greatest achievements in space exploration – <br> from the historic Apollo moon landings to cutting-edge telescopes discovering distant galaxies. <br> Each mission represents human curiosity, innovation, and our quest <br> to understand the cosmos and our place within it.</p>
          </div>
          <br>
-         <div class="middle">
-            <h2 style="color:rgb(93, 150, 237); font-family: 'BioRhyme';"  id="hostname">Solar System Pod Name</h2>
+         <div class="middle mission-info">
+            <h2 style="color:rgb(93, 150, 237); font-family: 'BioRhyme'; text-align: center;" id="hostname">Space Missions Pod Name</h2>
 
             <!-- <h3 style="color:rgb(111, 255, 171); font-family: 'Encode Sans';" id="environment">ENVIRONMENT: " placeholder "</h3> -->
          </div>
-      </div>
-      <div  id="planetImage">  
+         </div> <!-- End content-section -->
+      </div> <!-- End main-container -->
+      <div  id="missionImage">  
       </div>
       <script type="text/javascript"  src="app-controller.js" charset="utf-8"></script>
    </body>

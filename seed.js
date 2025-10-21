@@ -9,7 +9,7 @@ mongoose.connect(process.env.MONGO_URI, {
     console.log("MongoDB Connected - Seeding Data...");
 }).catch(err => console.log("DB Connection Error: " + err));
 
-const planetSchema = new mongoose.Schema({
+const missionSchema = new mongoose.Schema({
     id: Number,
     name: String,
     description: String,
@@ -18,78 +18,78 @@ const planetSchema = new mongoose.Schema({
     distance: String
 });
 
-const Planet = mongoose.model("planets", planetSchema);
+const Mission = mongoose.model("missions", missionSchema);
 
 async function seed() {
     try {
-        await Planet.deleteMany({}); // clear old data
-        await Planet.insertMany([
+        await Mission.deleteMany({}); // clear old data
+        await Mission.insertMany([
             {
                 id: 1,
-                name: "Mercury",
-                description: "Mercury is the smallest planet in our solar system and closest to the Sun.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg",
-                velocity: "47.87 km/s",
-                distance: "57.9 million km"
+                name: "Apollo 11",
+                description: "First crewed mission to land on the Moon on July 20, 1969. Neil Armstrong and Buzz Aldrin became the first humans to walk on the lunar surface.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/9/98/Aldrin_Apollo_11_original.jpg",
+                velocity: "11.08 km/s",
+                distance: "384,400 km"
             },
             {
                 id: 2,
-                name: "Venus",
-                description: "Venus has a thick, toxic atmosphere and surface temperatures hot enough to melt lead.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg",
-                velocity: "35.02 km/s",
-                distance: "108.2 million km"
+                name: "Voyager 1",
+                description: "Launched in 1977, Voyager 1 is the most distant human-made object from Earth, now in interstellar space, carrying the Golden Record.",
+                image: "https://images-assets.nasa.gov/image/PIA21895/PIA21895~orig.jpg",
+                velocity: "17 km/s",
+                distance: "24 billion km"
             },
             {
                 id: 3,
-                name: "Earth",
-                description: "Earth is the only planet known to support life, with vast oceans and diverse ecosystems.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg",
-                velocity: "29.78 km/s",
-                distance: "149.6 million km"
+                name: "Mars Rover Curiosity",
+                description: "Landed on Mars in 2012, Curiosity explores Gale Crater, studying Martian climate and geology to assess past habitability.",
+                image: "https://images-assets.nasa.gov/image/PIA16239/PIA16239~orig.jpg",
+                velocity: "0.14 km/h",
+                distance: "225 million km"
             },
             {
                 id: 4,
-                name: "Mars",
-                description: "Mars is the red planet, home to the tallest volcano and deepest canyon in the solar system.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg",
-                velocity: "24.07 km/s",
-                distance: "227.9 million km"
+                name: "Hubble Space Telescope",
+                description: "Launched in 1990, Hubble has revolutionized astronomy with stunning images and discoveries about the universe's age, dark energy, and exoplanets.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/HST-SM4.jpeg/800px-HST-SM4.jpeg",
+                velocity: "7.59 km/s",
+                distance: "547 km orbit"
             },
             {
                 id: 5,
-                name: "Jupiter",
-                description: "Jupiter is the largest planet with a giant storm known as the Great Red Spot.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg",
-                velocity: "13.07 km/s",
-                distance: "778.5 million km"
-            },
-            {
-                id: 6,
-                name: "Saturn",
-                description: "Saturn is famous for its stunning ring system made of ice and rock.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg",
-                velocity: "9.69 km/s",
+                name: "Cassini-Huygens",
+                description: "Studied Saturn and its moons from 2004-2017. Discovered liquid methane seas on Titan and water geysers on Enceladus.",
+                image: "https://images-assets.nasa.gov/image/PIA08329/PIA08329~orig.jpg",
+                velocity: "34 km/s",
                 distance: "1.4 billion km"
             },
             {
+                id: 6,
+                name: "New Horizons",
+                description: "First mission to Pluto in 2015, revealing its heart-shaped glacier and complex atmosphere. Now exploring the Kuiper Belt.",
+                image: "https://images-assets.nasa.gov/image/PIA20037/PIA20037~orig.jpg",
+                velocity: "14.31 km/s",
+                distance: "5.9 billion km"
+            },
+            {
                 id: 7,
-                name: "Uranus",
-                description: "Uranus rotates on its side, making its seasons extreme.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg",
-                velocity: "6.81 km/s",
-                distance: "2.9 billion km"
+                name: "James Webb Space Telescope",
+                description: "Launched in 2021, JWST observes the universe in infrared, studying the first galaxies, star formation, and exoplanet atmospheres.",
+                image: "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000393/GSFC_20171208_Archive_e000393~orig.jpg",
+                velocity: "0.4 km/s",
+                distance: "1.5 million km"
             },
             {
                 id: 8,
-                name: "Neptune",
-                description: "Neptune is a windy, icy giant with supersonic winds.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg",
-                velocity: "5.43 km/s",
-                distance: "4.5 billion km"
+                name: "International Space Station",
+                description: "A habitable space station in low Earth orbit since 2000, serving as a microgravity research laboratory for 16 nations.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/International_Space_Station_after_undocking_of_STS-132.jpg/800px-International_Space_Station_after_undocking_of_STS-132.jpg",
+                velocity: "7.66 km/s",
+                distance: "408 km orbit"
             }
         ]);
-        console.log("Seeding Complete 🌍✅");
+        console.log("Seeding Complete 🚀✅");
     } catch (err) {
         console.error("Seeding failed ❌", err);
     } finally {
