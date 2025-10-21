@@ -97,7 +97,7 @@ Optional for containerized deployment:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/space-missions-explorer.git
+   git clone https://github.com/Umair-s-Org/space-missions-explorer.git
    cd space-missions-explorer
    ```
 
