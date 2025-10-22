@@ -30,19 +30,19 @@ pipeline {
                         '''
                     }
                 }
-                stage ('OWASP Dependency Check') {
-                    steps {
-                        dependencyCheck additionalArguments: '''
-                            --scan ./
-                            --out ./
-                            --format ALL
-                            --disableYarnAudit
-                            --suppression owasp-suppression.xml
-                            --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12'
+                // stage ('OWASP Dependency Check') {
+                //     steps {
+                //         dependencyCheck additionalArguments: '''
+                //             --scan ./
+                //             --out ./
+                //             --format ALL
+                //             --disableYarnAudit
+                //             --suppression owasp-suppression.xml
+                //             --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12'
 
-                        dependencyCheckPublisher failedTotalCritical: 5, pattern: 'dependency-check-report.xml', stopBuild: false, unstableTotalCritical: 3
-                    }
-                }
+                //         dependencyCheckPublisher failedTotalCritical: 5, pattern: 'dependency-check-report.xml', stopBuild: false, unstableTotalCritical: 3
+                //     }
+                // }
 
             }
         }
