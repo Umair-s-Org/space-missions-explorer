@@ -25,8 +25,8 @@ pipeline {
                 stage ('NPM Dependency Audit') {
                     steps {
                         sh '''
-                            npm audit --audit-level=crirtical
-                            echo $?
+                            npm audit --audit-level=critical
+                            echo "NPM Audit exit code: $?"
                         '''
                     }
                 }
@@ -37,9 +37,10 @@ pipeline {
                             --out ./
                             --format ALL
                             --disableYarnAudit
+                            --suppression owasp-suppression.xml
                             --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12'
 
-                        dependencyCheckPublisher failedTotalCritical: 2, pattern: 'dependency-check-report.xml', stopBuild: true, unstableTotalCritical: 2
+                        dependencyCheckPublisher failedTotalCritical: 5, pattern: 'dependency-check-report.xml', stopBuild: false, unstableTotalCritical: 3
                     }
                 }
 

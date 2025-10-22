@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- 
+    OWASP Dependency Check Suppression File
+    Use this file to suppress false positives or known acceptable risks
+    -->
+    
+    <!-- Example suppression for development dependencies that don't affect production -->
+    <!--
+    <suppress>
+        <notes><![CDATA[
+        This suppresses false positives related to test dependencies in development environment
+        ]]></notes>
+        <gav regex="true">^dev\.test:.*:.*$</gav>
+        <cve>CVE-2021-XXXXX</cve>
+    </suppress>
+    -->
+    
+    <!-- Suppress vulnerabilities in dev dependencies if they don't affect production -->
+    <!--
+    <suppress>
+        <notes><![CDATA[
+        Mocha test framework vulnerabilities don't affect production deployment
+        ]]></notes>
+        <filePath regex="true">.*node_modules/mocha/.*</filePath>
+    </suppress>
+    -->
+    
+    <!-- Example: Suppress specific CVEs that are confirmed as false positives -->
+    <!--
+    <suppress>
+        <notes><![CDATA[
+        CVE-XXXX-XXXX is a false positive for our use case because [reason]
+        ]]></notes>
+        <gav regex="true">^package-name:.*:.*$</gav>
+        <cve>CVE-XXXX-XXXX</cve>
+    </suppress>
+    -->
+    
+</suppressions>
