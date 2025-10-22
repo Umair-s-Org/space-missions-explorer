@@ -142,6 +142,8 @@ describe('Testing Other Endpoints', () => {
               .get('/os')
               .end((err, res) => {
                     res.should.have.status(200);
+                    res.body.should.have.property('os');
+                    res.body.should.have.property('env');
                 done();
               });
         });
@@ -166,6 +168,132 @@ describe('Testing Other Endpoints', () => {
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('status').eql('ready');
+                done();
+              });
+        });
+    });
+
+    describe('it should fetch Main HTML Page', () => {
+        it('it should serve the main HTML page', (done) => {
+          chai.request(server)
+              .get('/')
+              .end((err, res) => {
+                    res.should.have.status(200);
+                    res.should.have.header('content-type', /text\/html/);
+                done();
+              });
+        });
+    });
+
+});
+
+// Add tests for error conditions to improve coverage
+describe('Testing Error Conditions', () => {
+
+    describe('Mission API Error Handling', () => {
+        it('it should handle invalid mission ID gracefully', (done) => {
+            let payload = {
+                id: 999  // Invalid mission ID
+            }
+          chai.request(server)
+              .post('/mission')
+              .send(payload)
+              .end((err, res) => {
+                    res.should.have.status(200);
+                    // Should return null for non-existent mission or empty object
+                done();
+              });
+        });
+
+        it('it should handle missing ID in request body', (done) => {
+            let payload = {
+                name: "test"  // Missing id field but has other data
+            }
+          chai.request(server)
+              .post('/mission')
+              .send(payload)
+              .end((err, res) => {
+                    res.should.have.status(200);
+                done();
+              });
+        });
+
+        it('it should handle string ID in request body', (done) => {
+            let payload = {
+                id: "invalid"  // String instead of number
+            }
+          chai.request(server)
+              .post('/mission')
+              .send(payload)
+              .end((err, res) => {
+                    res.should.have.status(200);
+                done();
+              });
+        });
+
+        it('it should handle empty request body', (done) => {
+          chai.request(server)
+              .post('/mission')
+              .send({})
+              .end((err, res) => {
+                    res.should.have.status(200);
+                done();
+              });
+        });
+
+        it('it should handle null ID in request body', (done) => {
+            let payload = {
+                id: null
+            }
+          chai.request(server)
+              .post('/mission')
+              .send(payload)
+              .end((err, res) => {
+                    res.should.have.status(200);
+                done();
+              });
+        });
+    });
+
+    describe('HTTP Methods Coverage', () => {
+        it('it should handle GET request to mission endpoint (404)', (done) => {
+          chai.request(server)
+              .get('/mission')
+              .end((err, res) => {
+                    // This endpoint doesn't exist for GET, should return 404
+                    res.should.have.status(404);
+                done();
+              });
+        });
+
+        it('it should handle PUT request to mission endpoint (404)', (done) => {
+          chai.request(server)
+              .put('/mission')
+              .send({id: 1})
+              .end((err, res) => {
+                    // PUT not implemented, should return 404
+                    res.should.have.status(404);
+                done();
+              });
+        });
+
+        it('it should handle DELETE request to mission endpoint (404)', (done) => {
+          chai.request(server)
+              .delete('/mission')
+              .end((err, res) => {
+                    // DELETE not implemented, should return 404
+                    res.should.have.status(404);
+                done();
+              });
+        });
+    });
+
+    describe('Static File Serving', () => {
+        it('it should serve static files from root directory', (done) => {
+          chai.request(server)
+              .get('/package.json')  // This should be served as static file
+              .end((err, res) => {
+                    res.should.have.status(200);
                 done();
               });
         });
