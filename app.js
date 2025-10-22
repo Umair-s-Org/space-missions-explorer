@@ -40,7 +40,7 @@ var missionModel = mongoose.model('missions', dataSchema);
 
 
 
-app.post('/mission',   function(req, res) {
+app.post('/mission', function(req, res) {
    // console.log("Received Mission ID " + req.body.id)
     missionModel.findOne({
         id: req.body.id

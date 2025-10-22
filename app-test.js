@@ -8,143 +8,127 @@ let chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp); 
 
-describe('Planets API Suite', () => {
+describe('Space Missions API Suite', () => {
 
-    describe('Fetching Planet Details', () => {
-        it('it should fetch a planet named Mercury', (done) => {
+    describe('Fetching Mission Details', () => {
+        it('it should fetch a mission named Apollo 11', (done) => {
             let payload = {
                 id: 1
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(1);
-                    res.body.should.have.property('name').eql('Mercury');
+                    res.body.should.have.property('name').eql('Apollo 11');
                 done();
               });
         });
 
-        it('it should fetch a planet named Venus', (done) => {
+        it('it should fetch a mission named Voyager 1', (done) => {
             let payload = {
                 id: 2
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(2);
-                    res.body.should.have.property('name').eql('Venus');
+                    res.body.should.have.property('name').eql('Voyager 1');
                 done();
               });
         });
 
-        it('it should fetch a planet named Earth', (done) => {
+        it('it should fetch a mission named Mars Rover Curiosity', (done) => {
             let payload = {
                 id: 3
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(3);
-                    res.body.should.have.property('name').eql('Earth');
+                    res.body.should.have.property('name').eql('Mars Rover Curiosity');
                 done();
               });
         });
-        it('it should fetch a planet named Mars', (done) => {
+        it('it should fetch a mission named Hubble Space Telescope', (done) => {
             let payload = {
                 id: 4
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(4);
-                    res.body.should.have.property('name').eql('Mars');
+                    res.body.should.have.property('name').eql('Hubble Space Telescope');
                 done();
               });
         });
 
-        it('it should fetch a planet named Jupiter', (done) => {
+        it('it should fetch a mission named Cassini-Huygens', (done) => {
             let payload = {
                 id: 5
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(5);
-                    res.body.should.have.property('name').eql('Jupiter');
+                    res.body.should.have.property('name').eql('Cassini-Huygens');
                 done();
               });
         });
 
-        it('it should fetch a planet named Satrun', (done) => {
+        it('it should fetch a mission named New Horizons', (done) => {
             let payload = {
                 id: 6
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(6);
-                    res.body.should.have.property('name').eql('Saturn');
+                    res.body.should.have.property('name').eql('New Horizons');
                 done();
               });
         });
 
-        it('it should fetch a planet named Uranus', (done) => {
+        it('it should fetch a mission named James Webb Space Telescope', (done) => {
             let payload = {
                 id: 7
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(7);
-                    res.body.should.have.property('name').eql('Uranus');
+                    res.body.should.have.property('name').eql('James Webb Space Telescope');
                 done();
               });
         });
 
-        it('it should fetch a planet named Neptune', (done) => {
+        it('it should fetch a mission named International Space Station', (done) => {
             let payload = {
                 id: 8
             }
           chai.request(server)
-              .post('/planet')
+              .post('/mission')
               .send(payload)
               .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('id').eql(8);
-                    res.body.should.have.property('name').eql('Neptune');
+                    res.body.should.have.property('name').eql('International Space Station');
                 done();
               });
         });
-
-        // it('it should fetch a planet named Pluto', (done) => {
-        //     let payload = {
-        //         id: 9
-        //     }
-        //   chai.request(server)
-        //       .post('/planet')
-        //       .send(payload)
-        //       .end((err, res) => {
-        //             res.should.have.status(200);
-        //             res.body.should.have.property('id').eql(9);
-        //             res.body.should.have.property('name').eql('Sun');
-        //         done();
-        //       });
-        // });
-
 
     });        
 });
